@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            display: inline-block;
+        }
+        input, button {
+            margin: 10px;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            border: none;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>🔒 Password Generator</h2>
+        <input type="number" id="length" placeholder="Enter length (min 4)" min="4">
+        <br>
+        <button onclick="generatePassword()">Generate Password</button>
+        <input type="text" id="password" readonly>
+        <button onclick="copyPassword()">Copy</button>
+    </div>
+
+    <script>
+        function generatePassword() {
+            let length = document.getElementById("length").value || 12;
+            
+            fetch('/generate', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                body: `length=${length}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.password) {
+                    document.getElementById("password").value = data.password;
+                } else {
+                    alert(data.error);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        function copyPassword() {
+            let passwordField = document.getElementById("password");
+            passwordField.select();
+            document.execCommand("copy");
+            alert("Password copied!");
+        }
+    </script>
+
+</body>
+</html>
